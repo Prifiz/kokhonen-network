@@ -38,10 +38,35 @@ public class LearningSetGenerator {
         net.set(winnerIndex, neuronToTeach);
         return net;
     }
-    
-//    public List<Neuron> getTaughtNetKohonen(List<Neuron> net, int winnerIndex, float[] input) {
-//        
-//    }
+
+    public int[] getSArray(int K, int neuronsInNet, int winnerIndex) {
+        int[] result = new int[neuronsInNet];
+        for(int i = 0; i < neuronsInNet; i++) {
+            if(Math.abs(winnerIndex - i) < K) {
+                result[i] = 1;
+            } else {
+                result[i] = 0;
+            }
+        }
+        return result;
+    }
+
+    public List<Neuron> getTaughtNetKohonen(List<Neuron> net, int winnerIndex, float[] input) {
+        Neuron neuronToTeach = net.get(winnerIndex);
+        float beta = 0.5f;
+        float[] weightsOld = neuronToTeach.getWeights();
+        int components = neuronToTeach.getComponents();
+        float[] weightsNew = new float[components];
+        int[] s = getSArray(1, net.size(), winnerIndex);
+        for(int j = 0; j < net.size(); j++) {
+            for(int i = 0; i < components; i++) {
+                weightsNew[i] = weightsOld[i] + beta * s[j] * (input[i] - weightsOld[i]);
+            }
+        }
+        neuronToTeach.setWeights(weightsNew);
+        net.set(winnerIndex, neuronToTeach);
+        return net;
+    }
     
     public int getWinnerIndexWTA(List<Neuron> net, float[] input) {
         float minDist = (float) Double.POSITIVE_INFINITY;

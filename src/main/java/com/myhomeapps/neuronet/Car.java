@@ -1,13 +1,5 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package com.myhomeapps.neuronet;
 
-/**
- *
- * @author baranov
- */
 public class Car {
     private float length;
     private float width;
@@ -18,6 +10,33 @@ public class Car {
     private float roadClearance;
     private float base;
     private float fuelConsumption100km;
+    private float timeTo100kmh;
+    private float brakePath;
+    private float engineVolume;
+
+    public float getTimeTo100kmh() {
+        return timeTo100kmh;
+    }
+
+    public void setTimeTo100kmh(float timeTo100kmh) {
+        this.timeTo100kmh = timeTo100kmh;
+    }
+
+    public float getBrakePath() {
+        return brakePath;
+    }
+
+    public void setBrakePath(float brakePath) {
+        this.brakePath = brakePath;
+    }
+
+    public float getEngineVolume() {
+        return engineVolume;
+    }
+
+    public void setEngineVolume(float engineVolume) {
+        this.engineVolume = engineVolume;
+    }
 
     public float getLength() {
         return length;
@@ -95,7 +114,7 @@ public class Car {
     
     float[] toArray() {
         
-        float[] result = new float[9];
+        float[] result = new float[12];
         result[0] = base;
         result[1] = fuelConsumption100km;
         result[2] = height;
@@ -105,6 +124,9 @@ public class Car {
         result[6] = roadClearance;
         result[7] = turningRadius;
         result[8] = width;
+        result[9] = brakePath;
+        result[10] = engineVolume;
+        result[11] = timeTo100kmh;
         return result;
     }
 }

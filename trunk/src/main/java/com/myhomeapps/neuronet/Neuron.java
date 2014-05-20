@@ -1,13 +1,5 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package com.myhomeapps.neuronet;
 
-/**
- *
- * @author Prifiz
- */
 public class Neuron {
     private float[] weights;
     private int components;

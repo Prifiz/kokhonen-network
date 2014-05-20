@@ -1,13 +1,5 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package com.myhomeapps.neuronet;
 
-/**
- *
- * @author Prifiz
- */
 public class CarParamsRanges {
     private float length_min;
     private float length_max;
@@ -27,6 +19,60 @@ public class CarParamsRanges {
     private float base_max;
     private float fuelConsumption100km_min;
     private float fuelConsumption100km_max;
+    private float timeTo100kmh_min;
+    private float timeTo100kmh_max;
+    private float brakePath_min;
+    private float brakePath_max;
+    private float engineVolume_min;
+    private float engineVolume_max;
+
+    public float getTimeTo100kmh_min() {
+        return timeTo100kmh_min;
+    }
+
+    public void setTimeTo100kmh_min(float timeTo100kmh_min) {
+        this.timeTo100kmh_min = timeTo100kmh_min;
+    }
+
+    public float getTimeTo100kmh_max() {
+        return timeTo100kmh_max;
+    }
+
+    public void setTimeTo100kmh_max(float timeTo100kmh_max) {
+        this.timeTo100kmh_max = timeTo100kmh_max;
+    }
+
+    public float getBrakePath_min() {
+        return brakePath_min;
+    }
+
+    public void setBrakePath_min(float brakePath_min) {
+        this.brakePath_min = brakePath_min;
+    }
+
+    public float getBrakePath_max() {
+        return brakePath_max;
+    }
+
+    public void setBrakePath_max(float brakePath_max) {
+        this.brakePath_max = brakePath_max;
+    }
+
+    public float getEngineVolume_min() {
+        return engineVolume_min;
+    }
+
+    public void setEngineVolume_min(float engineVolume_min) {
+        this.engineVolume_min = engineVolume_min;
+    }
+
+    public float getEngineVolume_max() {
+        return engineVolume_max;
+    }
+
+    public void setEngineVolume_max(float engineVolume_max) {
+        this.engineVolume_max = engineVolume_max;
+    }
 
     public float getLength_min() {
         return length_min;

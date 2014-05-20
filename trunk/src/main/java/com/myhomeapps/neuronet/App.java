@@ -1,79 +1,151 @@
 package com.myhomeapps.neuronet;
 
 import java.util.ArrayList;
+import java.util.InputMismatchException;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Scanner;
 
-/**
- * Hello world!
- *
- */
-public class App 
-{
-    public static void main( String[] args )
-    {
-        System.out.println( "Hello World!" );
-        LearningSetGenerator generator = new LearningSetGenerator();
-        List<Neuron> net = generator.initializeNet(2, 9);
-//        float[] auto1 = {1, 2, 3};
-//        float[] auto2 = {1.1f, 2.1f, 3.1f};
-//        float[] auto3 = {0.9f, 1.9f, 2.9f};
-//        float[] auto4 = {10, 20, 30};
-//        float[] auto5 = {10.1f, 20.1f, 30.1f};
-//        float[] auto6 = {9.9f, 19.9f, 29.9f};
-//        List learningSet = new ArrayList();
-//        learningSet.add(auto1);
-//        learningSet.add(auto2);
-//        learningSet.add(auto3);
-//        learningSet.add(auto4);
-//        learningSet.add(auto5);
-//        learningSet.add(auto6);
-        
-        
-        List learningSet = new ArrayList();
-        CarParamsRanges passengerRange = generator.setPassengerCarParams();
-        CarParamsRanges truckRange = generator.setTrucksParams();
-        for(int i = 0; i < 20; i++) {
-            learningSet.add(generator.getCarsLearningSet(truckRange));
+public class App {
+
+    public static List<Neuron> handleMainMenu() {
+        System.out.println("Choose the educational algorithm:");
+        boolean exit = false;
+        List<Neuron> result = new ArrayList<Neuron>();
+        while (!exit) {
+            System.out.println("1. WTA");
+            System.out.println("2. Kohonen");
+            System.out.println("3. Exit");
+
+            int inputValue;
+            try {
+                Scanner scanner = new Scanner(System.in);
+                inputValue = scanner.nextInt();
+                switch (inputValue) {
+                    case 1: {
+                        List<Neuron> net = Initializer.initializeNet(3, 12);
+                        CarParamsRanges passengerRange = LearningSetGenerator.setPassengerCarParams();
+                        List passengerCarLearningSet = LearningSetGenerator.generateLearningSets(20, passengerRange);
+                        net = teachNetworkWTA(net, passengerCarLearningSet, 0);
+                        CarParamsRanges truckRange = LearningSetGenerator.setTrucksParams();
+                        List truckLearningSet = LearningSetGenerator.generateLearningSets(20, truckRange);
+                        net = teachNetworkWTA(net, truckLearningSet, 1);
+                        CarParamsRanges unrealCarRange = LearningSetGenerator.setUnrealCarsParams();
+                        List unrealCarLearningSet = LearningSetGenerator.generateLearningSets(20, unrealCarRange);
+                        net = teachNetworkWTA(net, unrealCarLearningSet, 2);
+                        return net;
+                    }
+                    case 2: {
+                        List<Neuron> net = Initializer.initializeNet(3, 12);
+                        CarParamsRanges passengerRange = LearningSetGenerator.setPassengerCarParams();
+                        List passengerCarLearningSet = LearningSetGenerator.generateLearningSets(20, passengerRange);
+                        net = teachNetworkKohonen(net, passengerCarLearningSet, 0);
+                        CarParamsRanges truckRange = LearningSetGenerator.setTrucksParams();
+                        List truckLearningSet = LearningSetGenerator.generateLearningSets(20, truckRange);
+                        net = teachNetworkKohonen(net, truckLearningSet, 1);
+                        CarParamsRanges unrealCarRange = LearningSetGenerator.setUnrealCarsParams();
+                        List unrealCarLearningSet = LearningSetGenerator.generateLearningSets(20, unrealCarRange);
+                        net = teachNetworkKohonen(net, unrealCarLearningSet, 2);
+                        return net;
+                    }
+                    case 3: {
+                        exit = true;
+                        break;
+                    }
+                    default: {
+                        System.out.println("Incorrect input! Please, try again!");
+                        break;
+                    }
+                }
+            } catch (InputMismatchException ex) {
+                System.out.println("INPUT SHOULD BE NUMBER");
+            }
         }
-        
-        for(Iterator it = learningSet.iterator(); it.hasNext();) {
+        return result;
+    }
+
+    public static List<Neuron> teachNetworkWTA(List<Neuron> net, List learningSet, int winner) {
+        for (Iterator it = learningSet.iterator(); it.hasNext();) {
             float[] auto = (float[]) it.next();
-            //int winner = generator.getWinnerIndexWTA(net, auto);
-            int winner = 0;
-            net = generator.getTaughtNetWTA(net, winner, auto);
+            net = Teacher.getTaughtNetWTA(net, winner, auto);
         }
-        
-        for(int i = 0; i < 20; i++) {
-            learningSet.add(generator.getCarsLearningSet(passengerRange));
-        }
-        
-        for(Iterator it = learningSet.iterator(); it.hasNext();) {
+        return net;
+    }
+
+    public static List<Neuron> teachNetworkKohonen(List<Neuron> net, List learningSet, int winner) {
+        for (Iterator it = learningSet.iterator(); it.hasNext();) {
             float[] auto = (float[]) it.next();
-            //int winner = generator.getWinnerIndexWTA(net, auto);
-            int winner = 1;
-            net = generator.getTaughtNetWTA(net, winner, auto);
+            net = Teacher.getTaughtNetKohonen(net, winner, auto);
         }
-        
-        Car testCar = new Car();
-        testCar.setBase(120);
-        testCar.setFuelConsumption100km(5);
-        testCar.setHeight(100);
-        testCar.setLength(200);
-        testCar.setMass(1500);
-        testCar.setMaxVelocity(250);
-        testCar.setRoadClearance(15);
-        testCar.setTurningRadius(170);
-        testCar.setWidth(100);
-        float[] testAuto = testCar.toArray();
-        //float[] testAuto = generator.getCarsLearningSet(truckRange);
-        int realWinner = generator.getWinnerIndexWTA(net, testAuto);
-        System.out.println("REAL WINNER IS: " + realWinner);
-        if(realWinner == 0) {
-            System.out.println("Input car is TRUCK");
-        } else if(realWinner == 1) {
-            System.out.println("Input car is PASSENGER_CAR");
+        return net;
+    }
+
+    public static int getTestWinner(List<Neuron> taughtNetwork) {
+        System.out.println("Choose the test car type:");
+        boolean exit = false;
+
+        int result = -1;
+
+        while (!exit) {
+            System.out.println("1. Passenger Car");
+            System.out.println("2. Truck");
+            System.out.println("3. Unreal Car");
+
+            int inputValue;
+            try {
+                Scanner scanner = new Scanner(System.in);
+                inputValue = scanner.nextInt();
+                switch (inputValue) {
+                    case 1: {
+                        CarParamsRanges passengerRange = LearningSetGenerator.setPassengerCarParams();
+                        float[] testAuto = LearningSetGenerator.getCarsLearningSet(passengerRange);
+                        return Teacher.getWinnerIndex(taughtNetwork, testAuto);
+                    }
+                    case 2: {
+                        CarParamsRanges truckRange = LearningSetGenerator.setTrucksParams();
+                        float[] testAuto = LearningSetGenerator.getCarsLearningSet(truckRange);
+                        return Teacher.getWinnerIndex(taughtNetwork, testAuto);
+                    }
+                    case 3: {
+                        CarParamsRanges unrealCar = LearningSetGenerator.setUnrealCarsParams();
+                        float[] testAuto = LearningSetGenerator.getCarsLearningSet(unrealCar);
+                        return Teacher.getWinnerIndex(taughtNetwork, testAuto);
+                    }
+                }
+            } catch (InputMismatchException ex) {
+                System.out.println("INPUT SHOULD BE NUMBER");
+            }
         }
-        
+        return result;
+    }
+
+    public static void main(String[] args) {
+        boolean stop = false;
+        while (!stop) {
+            System.out.println("1. Continue working");
+            System.out.println("2. Exit");
+
+            switch ((new Scanner(System.in)).nextInt()) {
+                case 1: {
+                    List<Neuron> taughtNetwork = handleMainMenu();
+                    int realWinner = getTestWinner(taughtNetwork);
+
+                    if (realWinner == 0) {
+                        System.out.println("Input car is PASSENGER_CAR");
+                    } else if (realWinner == 1) {
+                        System.out.println("Input car is TRUCK");
+                    } else if (realWinner == 2) {
+                        System.out.println("Input cat is UNREAL_CAR");
+                    } else {
+                        System.out.println("ERROR OCCURED");
+                    }
+                    break;
+                }
+                case 2: {
+                    stop = true;
+                    break;
+                }
+            }
+        }
     }
 }
